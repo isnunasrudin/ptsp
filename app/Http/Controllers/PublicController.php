@@ -13,7 +13,28 @@ class PublicController extends Controller
      */
     public function landing()
     {
-        return view('public.landing');
+        // Menghitung statistik real dari database
+        $totalBukuTamu = Support::count();
+        $totalSurvei = Feedback::count();
+        $bukuTamuSelesai = Support::where('status', 'selesai')->count();
+
+        // Menghitung rata-rata rating kepuasan
+        $avgRating = 0;
+        if ($totalSurvei > 0) {
+            $avgRating = Feedback::avg('overall_satisfaction') ?: 0;
+        }
+
+        // Konversi rating ke persentase kepuasan
+        $kepuasanPersen = $avgRating > 0 ? round(($avgRating / 5) * 100) : 95; // Default 95% jika belum ada data
+
+        $stats = [
+            'total_pengunjung' => $totalBukuTamu,
+            'kepuasan_persen' => $kepuasanPersen,
+            'hari_layanan' => 7, // Senin-Sabtu
+            'jenis_layanan' => 15, // Estimasi jumlah layanan
+        ];
+
+        return view('public.landing', compact('stats'));
     }
 
     /**
@@ -35,7 +56,17 @@ class PublicController extends Controller
             'phone' => 'required|string|max:20',
             'keperluan' => 'required|string|max:255',
             'keterangan' => 'nullable|string',
+            'kartu_identitas' => 'required|file|mimes:jpeg,jpg,png,gif,pdf|max:5120',
         ]);
+
+        // Handle file upload
+        $kartuIdentitasPath = null;
+        if ($request->hasFile('kartu_identitas')) {
+            $file = $request->file('kartu_identitas');
+            $fileName = 'kartu_identitas_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/kartu_identitas'), $fileName);
+            $kartuIdentitasPath = 'uploads/kartu_identitas/' . $fileName;
+        }
 
         Support::create([
             'name' => $request->name,
@@ -43,11 +74,19 @@ class PublicController extends Controller
             'phone' => $request->phone,
             'keperluan' => $request->keperluan,
             'keterangan' => $request->keterangan,
+            'kartu_identitas' => $kartuIdentitasPath,
             'status' => 'menunggu',
         ]);
 
-        return redirect()->route('public.buku-tamu')
-            ->with('success', 'Terima kasih! Data buku tamu Anda telah berhasil disimpan.');
+        return redirect()->route('public.buku-tamu.success');
+    }
+
+    /**
+     * Menampilkan halaman sukses setelah buku tamu
+     */
+    public function bukuTamuSuccess()
+    {
+        return view('public.buku-tamu-success');
     }
 
     /**

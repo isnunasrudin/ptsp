@@ -17,7 +17,7 @@
                 <h6 class="m-0 font-weight-bold text-primary">Edit Form Buku Tamu</h6>
             </div>
             <div class="card-body">
-                <form action="{{ route('supports.update', $support->id) }}" method="POST">
+                <form action="{{ route('supports.update', $support->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -69,6 +69,53 @@
                         <label for="keterangan">Keterangan Tambahan</label>
                         <textarea name="keterangan" id="keterangan" class="form-control" rows="3"
                                   placeholder="Masukkan keterangan tambahan (opsional)">{{ old('keterangan', $support->keterangan) }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="kartu_identitas">Kartu Identitas</label>
+                        <div class="border rounded p-3 bg-light">
+                            @if($support->kartu_identitas)
+                                @php
+                                    $fileExtension = strtolower(pathinfo($support->kartu_identitas, PATHINFO_EXTENSION));
+                                    $fileName = basename($support->kartu_identitas);
+                                @endphp
+                                <div class="mb-3">
+                                    <p class="mb-2"><strong>File Saat Ini:</strong></p>
+                                    <div class="d-flex align-items-center">
+                                        <div class="mr-3">
+                                            @if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
+                                                <i class="fas fa-image fa-lg text-primary"></i>
+                                            @else
+                                                <i class="fas fa-file-pdf fa-lg text-danger"></i>
+                                            @endif
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <small class="text-muted">{{ $fileName }}</small>
+                                            <br>
+                                            <a href="{{ asset($support->kartu_identitas) }}" target="_blank" class="btn btn-xs btn-outline-primary">
+                                                <i class="fas fa-eye"></i> Lihat
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <div class="custom-file">
+                                <input type="file" name="kartu_identitas" id="kartu_identitas" class="custom-file-input"
+                                       accept="image/*,.pdf">
+                                <label class="custom-file-label" for="kartu_identitas">
+                                    @if($support->kartu_identitas)
+                                        Ganti Kartu Identitas (Opsional)
+                                    @else
+                                        Pilih File Kartu Identitas
+                                    @endif
+                                </label>
+                            </div>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Kosongkan jika tidak ingin mengubah file. Format: JPG, PNG, GIF, PDF (Max: 5MB)
+                            </small>
+                        </div>
                     </div>
 
                     <div class="form-group">

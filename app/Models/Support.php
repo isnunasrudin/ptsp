@@ -12,6 +12,7 @@ class Support extends Model
         'phone',
         'keperluan',
         'keterangan',
+        'kartu_identitas',
         'status',
     ];
 }

@@ -54,6 +54,64 @@
                     </p>
                 </div>
 
+                @if($support->kartu_identitas)
+                <div class="form-group">
+                    <label><strong>Kartu Identitas</strong></label>
+                    <div class="border rounded p-3 bg-light">
+                        @php
+                            $fileExtension = strtolower(pathinfo($support->kartu_identitas, PATHINFO_EXTENSION));
+                            $fileName = basename($support->kartu_identitas);
+                        @endphp
+
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="mr-3">
+                                @if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
+                                    <i class="fas fa-image fa-2x text-primary"></i>
+                                @else
+                                    <i class="fas fa-file-pdf fa-2x text-danger"></i>
+                                @endif
+                            </div>
+                            <div>
+                                <h6 class="mb-0">{{ $fileName }}</h6>
+                                <small class="text-muted">Format: {{ strtoupper($fileExtension) }}</small>
+                            </div>
+                        </div>
+
+                        @if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
+                            <!-- Image preview -->
+                            <div class="text-center mb-3">
+                                <img src="{{ asset($support->kartu_identitas) }}"
+                                     class="img-fluid rounded border"
+                                     style="max-height: 300px;"
+                                     alt="Kartu Identitas">
+                            </div>
+                        @endif
+
+                        <div class="text-center">
+                            <a href="{{ asset($support->kartu_identitas) }}"
+                               target="_blank"
+                               class="btn btn-sm btn-primary">
+                                <i class="fas fa-external-link-alt mr-1"></i>
+                                Buka di Tab Baru
+                            </a>
+                            <a href="{{ asset($support->kartu_identitas) }}"
+                               download="{{ $fileName }}"
+                               class="btn btn-sm btn-success">
+                                <i class="fas fa-download mr-1"></i>
+                                Download
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                @else
+                <div class="form-group">
+                    <label><strong>Kartu Identitas</strong></label>
+                    <p class="form-control-plaintext text-muted">
+                        <i class="fas fa-exclamation-circle mr-2"></i> Tidak ada file kartu identitas
+                    </p>
+                </div>
+                @endif
+
                 @if($support->keterangan)
                 <div class="form-group">
                     <label><strong>Keterangan Tambahan</strong></label>

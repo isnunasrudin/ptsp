@@ -95,6 +95,31 @@
             50% { transform: translateY(-20px); }
         }
 
+        .hero-photo {
+            max-width: 90%;
+            height: auto;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .hero-photo::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(to top,
+                rgba(41, 78, 34, 0.3) 0%,
+                rgba(41, 78, 34, 0.2) 30%,
+                rgba(41, 78, 34, 0.1) 60%,
+                transparent 100%);
+            border-radius: 0 0 20px 20px;
+            pointer-events: none;
+        }
+
         .hero-content h1 {
             font-size: 3.5rem;
             font-weight: 800;
@@ -286,6 +311,60 @@
             .stat-number {
                 font-size: 2rem;
             }
+
+            .hero-photo {
+                max-width: 70%;
+                object-position: center 25%;
+                border-radius: 15px;
+                margin-bottom: 2rem;
+            }
+
+            .hero-photo::after {
+                height: 35%;
+                border-radius: 0 0 15px 15px;
+            }
+
+            .hero-section {
+                min-height: auto;
+                padding: 100px 0 50px;
+            }
+
+            .hero-content {
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+
+            .hero-buttons {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-hero {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-photo {
+                max-width: 80%;
+                object-position: center 20%;
+                border-radius: 10px;
+            }
+
+            .hero-photo::after {
+                height: 30%;
+                border-radius: 0 0 10px 10px;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .hero-content p {
+                font-size: 1rem;
+            }
         }
 
         /* Scroll to top button */
@@ -375,7 +454,7 @@
                 </div>
                 <div class="col-lg-6" data-aos="fade-left">
                     <div class="hero-image text-center">
-                        <i class="fas fa-users-cog" style="font-size: 20rem; color: rgba(255, 255, 255, 0.2);"></i>
+                        <img src="{{ asset('img/Kepala Sekolah.webp') }}" alt="Kepala Sekolah MTsN 2 Trenggalek" class="img-fluid hero-photo rounded-lg">
                     </div>
                 </div>
             </div>
@@ -415,29 +494,23 @@
     <!-- Statistics Section -->
     <section class="stats-section">
         <div class="container">
-            <div class="row">
+            <div class="row justify-content-center">
                 <div class="col-lg-3 col-md-6 mb-4" data-aos="zoom-in" data-aos-delay="100">
                     <div class="stat-card">
-                        <div class="stat-number" data-count="500">0</div>
+                        <div class="stat-number" data-count="{{ $stats['total_pengunjung'] }}">0</div>
                         <div class="stat-label">Pengunjung Terlayani</div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4" data-aos="zoom-in" data-aos-delay="200">
                     <div class="stat-card">
-                        <div class="stat-number" data-count="95">0%</div>
+                        <div class="stat-number" data-count="{{ $stats['kepuasan_persen'] }}" data-suffix="%">0</div>
                         <div class="stat-label">Kepuasan Masyarakat</div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4" data-aos="zoom-in" data-aos-delay="300">
                     <div class="stat-card">
-                        <div class="stat-number" data-count="7">0</div>
+                        <div class="stat-number" data-count="{{ $stats['hari_layanan'] }}">0</div>
                         <div class="stat-label">Hari Layanan/Minggu</div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4" data-aos="zoom-in" data-aos-delay="400">
-                    <div class="stat-card">
-                        <div class="stat-number" data-count="15">0+</div>
-                        <div class="stat-label">Jenis Layanan</div>
                     </div>
                 </div>
             </div>
@@ -598,7 +671,7 @@
                     var step = countNum / (duration / 16);
                     var current = 0;
 
-                    if (!$this.hasClass('counted')) {
+                    if (!$this.hasClass('counted') && countNum > 0) {
                         $this.addClass('counted');
                         var timer = setInterval(function() {
                             current += step;
@@ -606,9 +679,10 @@
                                 current = countNum;
                                 clearInterval(timer);
                             }
-                            if (countTo.includes('%')) {
+                            var suffix = $this.attr('data-suffix') || '';
+                            if (suffix === '%') {
                                 $this.text(Math.floor(current) + '%');
-                            } else if (countTo.includes('+')) {
+                            } else if (suffix === '+') {
                                 $this.text(Math.floor(current) + '+');
                             } else {
                                 $this.text(Math.floor(current));

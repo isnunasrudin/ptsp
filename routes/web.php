@@ -33,6 +33,7 @@ Route::get('/about', function () {
 // Public Routes
 Route::get('/buku-tamu', 'PublicController@bukuTamu')->name('public.buku-tamu');
 Route::post('/buku-tamu', 'PublicController@storeBukuTamu')->name('public.buku-tamu.store');
+Route::get('/buku-tamu/success', 'PublicController@bukuTamuSuccess')->name('public.buku-tamu.success');
 Route::get('/survei-kepuasan', 'PublicController@surveiKepuasan')->name('public.survei-kepuasan');
 Route::post('/survei-kepuasan', 'PublicController@storeSurveiKepuasan')->name('public.survei-kepuasan.store');
 

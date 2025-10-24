@@ -115,6 +115,7 @@
                         <th>Telepon</th>
                         <th>Keperluan</th>
                         <th>Status</th>
+                        <th>Kartu Identitas</th>
                         <th>Keterangan</th>
                         <th>Aksi</th>
                     </tr>
@@ -127,6 +128,7 @@
                         <th>Telepon</th>
                         <th>Keperluan</th>
                         <th>Status</th>
+                        <th>Kartu Identitas</th>
                         <th>Keterangan</th>
                         <th>Aksi</th>
                     </tr>
@@ -146,6 +148,32 @@
                                 <span class="badge badge-{{ $support->status == 'selesai' ? 'success' : ($support->status == 'diproses' ? 'info' : 'warning') }}">
                                     {{ ucfirst($support->status) }}
                                 </span>
+                            </td>
+                            <td class="text-center">
+                                @if($support->kartu_identitas)
+                                    @php
+                                        $fileExtension = strtolower(pathinfo($support->kartu_identitas, PATHINFO_EXTENSION));
+                                    @endphp
+                                    @if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
+                                        <!-- Image file -->
+                                        <a href="{{ asset($support->kartu_identitas) }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Lihat Gambar">
+                                            <i class="fas fa-image"></i>
+                                        </a>
+                                    @else
+                                        <!-- PDF or other file -->
+                                        <a href="{{ asset($support->kartu_identitas) }}" target="_blank" class="btn btn-sm btn-outline-danger" title="Lihat Dokumen">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </a>
+                                    @endif
+                                    <small class="d-block text-muted mt-1">
+                                        {{ strtoupper($fileExtension) }}
+                                    </small>
+                                @else
+                                    <span class="text-muted">
+                                        <i class="fas fa-times-circle"></i>
+                                        <small> tidak ada</small>
+                                    </span>
+                                @endif
                             </td>
                             <td>
                                 @if($support->keterangan)
@@ -174,7 +202,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center">Tidak ada data buku tamu</td>
+                            <td colspan="9" class="text-center">Tidak ada data buku tamu</td>
                         </tr>
                     @endforelse
                 </tbody>

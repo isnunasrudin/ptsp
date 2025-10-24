@@ -71,10 +71,27 @@ class SupportController extends Controller
             'phone' => 'required|string|max:20',
             'keperluan' => 'required|string|max:255',
             'keterangan' => 'nullable|string',
+            'kartu_identitas' => 'nullable|file|mimes:jpeg,jpg,png,gif,pdf|max:5120',
             'status' => 'required|in:menunggu,diproses,selesai',
         ]);
 
-        $support->update($request->all());
+        // Handle file upload
+        $updateData = $request->except('kartu_identitas');
+
+        if ($request->hasFile('kartu_identitas')) {
+            // Delete old file if exists
+            if ($support->kartu_identitas && file_exists(public_path($support->kartu_identitas))) {
+                unlink(public_path($support->kartu_identitas));
+            }
+
+            // Upload new file
+            $file = $request->file('kartu_identitas');
+            $fileName = 'kartu_identitas_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/kartu_identitas'), $fileName);
+            $updateData['kartu_identitas'] = 'uploads/kartu_identitas/' . $fileName;
+        }
+
+        $support->update($updateData);
 
         return redirect()->route('supports.index')
             ->with('success', 'Data buku tamu berhasil diperbarui.');
@@ -85,6 +102,11 @@ class SupportController extends Controller
      */
     public function destroy(Support $support)
     {
+        // Delete associated file if exists
+        if ($support->kartu_identitas && file_exists(public_path($support->kartu_identitas))) {
+            unlink(public_path($support->kartu_identitas));
+        }
+
         $support->delete();
 
         return redirect()->route('supports.index')
