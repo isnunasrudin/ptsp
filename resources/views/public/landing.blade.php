@@ -584,10 +584,9 @@
                         <h4><i class="fas fa-graduation-cap mr-2"></i>PTSP MTsN 2 Trenggalek</h4>
                         <p>Pelayanan Terpadu Satu Pintu - Sistem digital untuk pencatatan layanan dan survei kepuasan masyarakat terhadap layanan madrasah.</p>
                         <div class="social-icons mt-3">
-                            <a href="https://www.facebook.com/mtsn2trenggalek" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                            <a href="https://www.instagram.com/mtsn2trenggalek" target="_blank"><i class="fab fa-instagram"></i></a>
-                            <a href="https://twitter.com/mtsn2trenggalek" target="_blank"><i class="fab fa-twitter"></i></a>
-                            <a href="https://www.youtube.com/@mtsn2trenggalek" target="_blank"><i class="fab fa-youtube"></i></a>
+                            <a href="https://www.facebook.com/ps7.madtsaduta" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                            <a href="https://www.instagram.com/mtsn2trenggalek_official" target="_blank"><i class="fab fa-instagram"></i></a>
+                            <a href="https://www.youtube.com/channel/UC1LAJ9zp901xeoW8dEAeiWw" target="_blank"><i class="fab fa-youtube"></i></a>
                         </div>
                     </div>
                 </div>
@@ -608,7 +607,7 @@
                             <li><i class="fas fa-map-marker-alt mr-2"></i> JL. Raya Sugihan - Kampak, Trenggalek, Jawa Timur</li>
                             <li><i class="fas fa-phone mr-2"></i> (0355) 631045</li>
                             <li><i class="fas fa-envelope mr-2"></i> info@mtsnkampak.sch.id</li>
-                            <li><i class="fas fa-clock mr-2"></i> Senin - Jumat: 07:00 - 12:30</li>
+                            <li><i class="fas fa-clock mr-2"></i> Senin - Sabtu: 07:00 - 12:30</li>
                         </ul>
                     </div>
                 </div>
