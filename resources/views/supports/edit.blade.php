@@ -475,7 +475,7 @@
 
                     <div class="form-group mb-4">
                         <label for="kartu_identitas" class="font-weight-bold text-gray-700">
-                            <i class="fas fa-camera mr-1"></i> Foto Diri
+                            <i class="fas fa-camera mr-1"></i> Foto Diri (Wajib) *
                         </label>
                         <div class="border rounded p-3 bg-light">
                             @if($support->kartu_identitas)
@@ -502,7 +502,7 @@
 
                             <div class="custom-file">
                                 <input type="file" name="kartu_identitas" id="kartu_identitas" class="custom-file-input"
-                                       accept="image/*">
+                                       accept="image/*" {{ !$support->kartu_identitas ? 'required' : '' }}>
                                 <label class="custom-file-label" for="kartu_identitas">
                                     @if($support->kartu_identitas)
                                         Ganti Foto (Opsional)
@@ -513,7 +513,11 @@
                             </div>
                             <small class="text-muted">
                                 <i class="fas fa-info-circle mr-1"></i>
-                                Kosongkan jika tidak ingin mengubah file. Format: JPG, PNG, GIF (Max: 5MB)
+                                @if($support->kartu_identitas)
+                                    Kosongkan jika tidak ingin mengubah file.
+                                @else
+                                    Foto wajib diupload. Format: JPG, PNG, GIF (Max: 5MB)
+                                @endif
                             </small>
                         </div>
                     </div>
@@ -689,6 +693,17 @@ $('form').on('submit', function(e) {
         e.preventDefault();
         alert('Harap pilih dokumen pendukung karena Anda memilih opsi "Ada dokumen pendukung".');
         $('#dokumen_pendukung').focus();
+        return false;
+    }
+
+    // Validate foto (required)
+    const fotoFile = $('#kartu_identitas')[0].files[0];
+    const hasExistingFoto = '{{ $support->kartu_identitas }}';
+
+    if (!fotoFile && !hasExistingFoto) {
+        e.preventDefault();
+        alert('Foto diri wajib diupload. Silakan pilih foto terlebih dahulu.');
+        $('#kartu_identitas').focus();
         return false;
     }
 

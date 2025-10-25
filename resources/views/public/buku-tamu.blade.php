@@ -517,7 +517,7 @@
 
                             <div class="form-group mb-4">
                                 <label for="kartu_identitas" class="font-weight-bold text-gray-700">
-                                    <i class="fas fa-camera mr-1"></i> Foto Diri
+                                    <i class="fas fa-camera mr-1"></i> Foto Diri (Wajib) *
                                 </label>
 
                                 <!-- File Input with Preview -->
@@ -525,7 +525,7 @@
                                     <div class="card-body">
                                         <div class="custom-file mb-3">
                                             <input type="file" name="kartu_identitas" id="kartu_identitas" class="custom-file-input"
-                                                   accept="image/*" autocomplete="off">
+                                                   accept="image/*" required autocomplete="off">
                                             <label class="custom-file-label" for="kartu_identitas">
                                                 <i class="fas fa-image mr-2"></i>Pilih Foto
                                             </label>
@@ -681,7 +681,16 @@
                 return false;
             }
 
-            
+            // Validate foto (required)
+            const fotoFile = $('#kartu_identitas')[0].files[0];
+
+            if (!fotoFile) {
+                e.preventDefault();
+                alert('Foto diri wajib diupload. Silakan pilih foto terlebih dahulu.');
+                $('#kartu_identitas').focus();
+                return false;
+            }
+
             $('button[type="submit"]').prop('disabled', true);
             $('button[type="submit"]').html('<i class="fas fa-spinner fa-spin mr-2"></i> Menyimpan...');
         });
