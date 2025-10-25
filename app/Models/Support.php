@@ -13,6 +13,7 @@ class Support extends Model
         'keperluan',
         'keterangan',
         'kartu_identitas',
+        'dokumen_pendukung',
         'status',
     ];
 }

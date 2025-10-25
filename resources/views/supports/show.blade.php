@@ -56,7 +56,7 @@
 
                 @if($support->kartu_identitas)
                 <div class="form-group">
-                    <label><strong>Kartu Identitas</strong></label>
+                    <label><strong>Foto</strong></label>
                     <div class="border rounded p-3 bg-light">
                         @php
                             $fileExtension = strtolower(pathinfo($support->kartu_identitas, PATHINFO_EXTENSION));
@@ -65,11 +65,7 @@
 
                         <div class="d-flex align-items-center mb-3">
                             <div class="mr-3">
-                                @if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
-                                    <i class="fas fa-image fa-2x text-primary"></i>
-                                @else
-                                    <i class="fas fa-file-pdf fa-2x text-danger"></i>
-                                @endif
+                                <i class="fas fa-image fa-2x text-primary"></i>
                             </div>
                             <div>
                                 <h6 class="mb-0">{{ $fileName }}</h6>
@@ -77,15 +73,13 @@
                             </div>
                         </div>
 
-                        @if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
-                            <!-- Image preview -->
-                            <div class="text-center mb-3">
-                                <img src="{{ asset($support->kartu_identitas) }}"
-                                     class="img-fluid rounded border"
-                                     style="max-height: 300px;"
-                                     alt="Kartu Identitas">
-                            </div>
-                        @endif
+                        <!-- Image preview -->
+                        <div class="text-center mb-3">
+                            <img src="{{ asset($support->kartu_identitas) }}"
+                                 class="img-fluid rounded border"
+                                 style="max-height: 300px;"
+                                 alt="Foto">
+                        </div>
 
                         <div class="text-center">
                             <a href="{{ asset($support->kartu_identitas) }}"
@@ -105,9 +99,93 @@
                 </div>
                 @else
                 <div class="form-group">
-                    <label><strong>Kartu Identitas</strong></label>
+                    <label><strong>Foto</strong></label>
                     <p class="form-control-plaintext text-muted">
-                        <i class="fas fa-exclamation-circle mr-2"></i> Tidak ada file kartu identitas
+                        <i class="fas fa-exclamation-circle mr-2"></i> Tidak ada file foto
+                    </p>
+                </div>
+                @endif
+
+                @if($support->dokumen_pendukung)
+                <div class="form-group">
+                    <label><strong>Dokumen Pendukung</strong></label>
+                    <div class="border rounded p-3 bg-light">
+                        @php
+                            $docExtension = strtolower(pathinfo($support->dokumen_pendukung, PATHINFO_EXTENSION));
+                            $docFileName = basename($support->dokumen_pendukung);
+                        @endphp
+
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="mr-3">
+                                @if(in_array($docExtension, ['jpg', 'jpeg', 'png', 'gif']))
+                                    <i class="fas fa-image fa-2x text-success"></i>
+                                @elseif($docExtension === 'pdf')
+                                    <i class="fas fa-file-pdf fa-2x text-danger"></i>
+                                @elseif(in_array($docExtension, ['doc', 'docx']))
+                                    <i class="fas fa-file-word fa-2x text-primary"></i>
+                                @else
+                                    <i class="fas fa-file fa-2x text-secondary"></i>
+                                @endif
+                            </div>
+                            <div>
+                                <h6 class="mb-0">{{ $docFileName }}</h6>
+                                <small class="text-muted">Format: {{ strtoupper($docExtension) }}</small>
+                            </div>
+                        </div>
+
+                        <!-- File preview based on type -->
+                        <div class="text-center mb-3">
+                            @if(in_array($docExtension, ['jpg', 'jpeg', 'png', 'gif']))
+                                <!-- Image preview -->
+                                <img src="{{ asset($support->dokumen_pendukung) }}"
+                                     class="img-fluid rounded border"
+                                     style="max-height: 300px;"
+                                     alt="Dokumen Pendukung">
+                            @elseif($docExtension === 'pdf')
+                                <!-- PDF preview icon -->
+                                <div class="py-5">
+                                    <i class="fas fa-file-pdf fa-5x text-danger mb-3"></i>
+                                    <h5 class="text-muted">Document PDF</h5>
+                                    <p class="text-muted">Klik tombol di bawah untuk melihat dokumen</p>
+                                </div>
+                            @elseif(in_array($docExtension, ['doc', 'docx']))
+                                <!-- Word document preview icon -->
+                                <div class="py-5">
+                                    <i class="fas fa-file-word fa-5x text-primary mb-3"></i>
+                                    <h5 class="text-muted">Document Word</h5>
+                                    <p class="text-muted">Klik tombol di bawah untuk melihat dokumen</p>
+                                </div>
+                            @else
+                                <!-- Generic file preview -->
+                                <div class="py-5">
+                                    <i class="fas fa-file fa-5x text-secondary mb-3"></i>
+                                    <h5 class="text-muted">Document</h5>
+                                    <p class="text-muted">Klik tombol di bawah untuk melihat dokumen</p>
+                                </div>
+                            @endif
+                        </div>
+
+                        <div class="text-center">
+                            <a href="{{ asset($support->dokumen_pendukung) }}"
+                               target="_blank"
+                               class="btn btn-sm btn-primary">
+                                <i class="fas fa-external-link-alt mr-1"></i>
+                                Buka di Tab Baru
+                            </a>
+                            <a href="{{ asset($support->dokumen_pendukung) }}"
+                               download="{{ $docFileName }}"
+                               class="btn btn-sm btn-success">
+                                <i class="fas fa-download mr-1"></i>
+                                Download
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                @else
+                <div class="form-group">
+                    <label><strong>Dokumen Pendukung</strong></label>
+                    <p class="form-control-plaintext text-muted">
+                        <i class="fas fa-exclamation-circle mr-2"></i> Tidak ada dokumen pendukung
                     </p>
                 </div>
                 @endif

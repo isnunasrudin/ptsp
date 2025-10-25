@@ -33,12 +33,40 @@ class SupportController extends Controller
             'name' => 'required|string|max:255',
             'instansi' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
-            'keperluan' => 'required|string|max:255',
+            'keperluan' => 'required_unless:keperluan,Lainnya|string|max:255',
+            'keperluan_manual' => 'required_if:keperluan,Lainnya|string|max:255',
             'keterangan' => 'nullable|string',
+            'kartu_identitas' => 'required|file|mimes:jpeg,jpg,png,gif|max:5120',
+            'dokumen_pendukung' => 'nullable|file|mimes:jpeg,jpg,png,gif,pdf,doc,docx|max:5120',
+            'has_dokumen' => 'required|in:tidak,ada',
             'status' => 'required|in:menunggu,diproses,selesai',
         ]);
 
-        Support::create($request->all());
+        // Handle file uploads
+        $data = $request->except(['kartu_identitas', 'dokumen_pendukung', 'keperluan_manual']);
+
+        // Set keperluan based on selection
+        if ($request->keperluan === 'Lainnya') {
+            $data['keperluan'] = $request->keperluan_manual;
+        }
+
+        // Handle kartu identitas upload
+        if ($request->hasFile('kartu_identitas')) {
+            $file = $request->file('kartu_identitas');
+            $fileName = 'kartu_identitas_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/kartu_identitas'), $fileName);
+            $data['kartu_identitas'] = 'uploads/kartu_identitas/' . $fileName;
+        }
+
+        // Handle dokumen pendukung upload only if user has dokumen
+        if ($request->has_dokumen === 'ada' && $request->hasFile('dokumen_pendukung')) {
+            $file = $request->file('dokumen_pendukung');
+            $fileName = 'dokumen_pendukung_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/dokumen_pendukung'), $fileName);
+            $data['dokumen_pendukung'] = 'uploads/dokumen_pendukung/' . $fileName;
+        }
+
+        Support::create($data);
 
         return redirect()->route('supports.index')
             ->with('success', 'Data buku tamu berhasil ditambahkan.');
@@ -69,15 +97,23 @@ class SupportController extends Controller
             'name' => 'required|string|max:255',
             'instansi' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
-            'keperluan' => 'required|string|max:255',
+            'keperluan' => 'required_unless:keperluan,Lainnya|string|max:255',
+            'keperluan_manual' => 'required_if:keperluan,Lainnya|string|max:255',
             'keterangan' => 'nullable|string',
-            'kartu_identitas' => 'nullable|file|mimes:jpeg,jpg,png,gif,pdf|max:5120',
+            'kartu_identitas' => 'nullable|file|mimes:jpeg,jpg,png,gif|max:5120',
+            'dokumen_pendukung' => 'nullable|file|mimes:jpeg,jpg,png,gif,pdf,doc,docx|max:5120',
             'status' => 'required|in:menunggu,diproses,selesai',
         ]);
 
-        // Handle file upload
-        $updateData = $request->except('kartu_identitas');
+        // Handle file uploads
+        $updateData = $request->except(['kartu_identitas', 'dokumen_pendukung', 'keperluan_manual']);
 
+        // Set keperluan based on selection
+        if ($request->keperluan === 'Lainnya') {
+            $updateData['keperluan'] = $request->keperluan_manual;
+        }
+
+        // Handle kartu identitas upload
         if ($request->hasFile('kartu_identitas')) {
             // Delete old file if exists
             if ($support->kartu_identitas && file_exists(public_path($support->kartu_identitas))) {
@@ -91,6 +127,20 @@ class SupportController extends Controller
             $updateData['kartu_identitas'] = 'uploads/kartu_identitas/' . $fileName;
         }
 
+        // Handle dokumen pendukung upload
+        if ($request->hasFile('dokumen_pendukung')) {
+            // Delete old file if exists
+            if ($support->dokumen_pendukung && file_exists(public_path($support->dokumen_pendukung))) {
+                unlink(public_path($support->dokumen_pendukung));
+            }
+
+            // Upload new file
+            $file = $request->file('dokumen_pendukung');
+            $fileName = 'dokumen_pendukung_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/dokumen_pendukung'), $fileName);
+            $updateData['dokumen_pendukung'] = 'uploads/dokumen_pendukung/' . $fileName;
+        }
+
         $support->update($updateData);
 
         return redirect()->route('supports.index')
@@ -102,9 +152,13 @@ class SupportController extends Controller
      */
     public function destroy(Support $support)
     {
-        // Delete associated file if exists
+        // Delete associated files if exists
         if ($support->kartu_identitas && file_exists(public_path($support->kartu_identitas))) {
             unlink(public_path($support->kartu_identitas));
+        }
+
+        if ($support->dokumen_pendukung && file_exists(public_path($support->dokumen_pendukung))) {
+            unlink(public_path($support->dokumen_pendukung));
         }
 
         $support->delete();

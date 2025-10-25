@@ -112,11 +112,8 @@
                         <th>No</th>
                         <th>Nama</th>
                         <th>Instansi</th>
-                        <th>Telepon</th>
                         <th>Keperluan</th>
-                        <th>Status</th>
-                        <th>Kartu Identitas</th>
-                        <th>Keterangan</th>
+                        <th>Lampiran</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -125,11 +122,8 @@
                         <th>No</th>
                         <th>Nama</th>
                         <th>Instansi</th>
-                        <th>Telepon</th>
                         <th>Keperluan</th>
-                        <th>Status</th>
-                        <th>Kartu Identitas</th>
-                        <th>Keterangan</th>
+                        <th>Lampiran</th>
                         <th>Aksi</th>
                     </tr>
                 </tfoot>
@@ -142,59 +136,81 @@
                             <td>{{ $no++ }}</td>
                             <td>{{ e($support->name) }}</td>
                             <td>{{ e($support->instansi) }}</td>
-                            <td>{{ e($support->phone) }}</td>
-                            <td>{{ e($support->keperluan) }}</td>
                             <td>
-                                <span class="badge badge-{{ $support->status == 'selesai' ? 'success' : ($support->status == 'diproses' ? 'info' : 'warning') }}">
-                                    {{ ucfirst($support->status) }}
+                                <span title="{{ e($support->keperluan) }}">
+                                    {{ Str::limit($support->keperluan, 40) }}
                                 </span>
+                                <br>
+                                <small class="text-muted">
+                                    <span class="badge badge-{{ $support->status == 'selesai' ? 'success' : ($support->status == 'diproses' ? 'info' : 'warning') }}">
+                                        {{ ucfirst($support->status) }}
+                                    </span>
+                                </small>
                             </td>
-                            <td class="text-center">
+                            <td>
+                                <!-- Foto -->
                                 @if($support->kartu_identitas)
                                     @php
                                         $fileExtension = strtolower(pathinfo($support->kartu_identitas, PATHINFO_EXTENSION));
                                     @endphp
-                                    @if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
-                                        <!-- Image file -->
-                                        <a href="{{ asset($support->kartu_identitas) }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Lihat Gambar">
-                                            <i class="fas fa-image"></i>
+                                    <div class="mb-1">
+                                        <a href="{{ asset($support->kartu_identitas) }}" target="_blank" class="btn btn-xs btn-outline-primary" title="Lihat Foto">
+                                            <i class="fas fa-image"></i> Foto
                                         </a>
-                                    @else
-                                        <!-- PDF or other file -->
-                                        <a href="{{ asset($support->kartu_identitas) }}" target="_blank" class="btn btn-sm btn-outline-danger" title="Lihat Dokumen">
-                                            <i class="fas fa-file-pdf"></i>
-                                        </a>
-                                    @endif
-                                    <small class="d-block text-muted mt-1">
-                                        {{ strtoupper($fileExtension) }}
-                                    </small>
-                                @else
+                                        <small class="d-block text-muted">
+                                            {{ strtoupper($fileExtension) }}
+                                        </small>
+                                    </div>
+                                @endif
+
+                                <!-- Dokumen Pendukung -->
+                                @if($support->dokumen_pendukung)
+                                    @php
+                                        $docExtension = strtolower(pathinfo($support->dokumen_pendukung, PATHINFO_EXTENSION));
+                                    @endphp
+                                    <div class="mb-1">
+                                        @if(in_array($docExtension, ['jpg', 'jpeg', 'png', 'gif']))
+                                            <a href="{{ asset($support->dokumen_pendukung) }}" target="_blank" class="btn btn-xs btn-outline-success" title="Lihat Dokumen">
+                                                <i class="fas fa-file-image"></i> Dokumen
+                                            </a>
+                                        @elseif($docExtension === 'pdf')
+                                            <a href="{{ asset($support->dokumen_pendukung) }}" target="_blank" class="btn btn-xs btn-outline-danger" title="Lihat Dokumen">
+                                                <i class="fas fa-file-pdf"></i> Dokumen
+                                            </a>
+                                        @elseif(in_array($docExtension, ['doc', 'docx']))
+                                            <a href="{{ asset($support->dokumen_pendukung) }}" target="_blank" class="btn btn-xs btn-outline-primary" title="Lihat Dokumen">
+                                                <i class="fas fa-file-word"></i> Dokumen
+                                            </a>
+                                        @else
+                                            <a href="{{ asset($support->dokumen_pendukung) }}" target="_blank" class="btn btn-xs btn-outline-secondary" title="Lihat Dokumen">
+                                                <i class="fas fa-file"></i> Dokumen
+                                            </a>
+                                        @endif
+                                        <small class="d-block text-muted">
+                                            {{ strtoupper($docExtension) }}
+                                        </small>
+                                    </div>
+                                @endif
+
+                                <!-- Jika tidak ada lampiran -->
+                                @if(!$support->kartu_identitas && !$support->dokumen_pendukung)
                                     <span class="text-muted">
                                         <i class="fas fa-times-circle"></i>
-                                        <small> tidak ada</small>
+                                        <small> Tidak ada</small>
                                     </span>
-                                @endif
-                            </td>
-                            <td>
-                                @if($support->keterangan)
-                                    <span class="text-muted" title="{{ e($support->keterangan) }}">
-                                        {{ Str::limit($support->keterangan, 30) }}
-                                    </span>
-                                @else
-                                    <span class="text-muted">-</span>
                                 @endif
                             </td>
                             <td>
                                 <form action="{{ route('supports.destroy', $support->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
-                                    <a href="{{ route('supports.show', $support->id) }}" class="btn btn-info btn-sm">
+                                    <a href="{{ route('supports.show', $support->id) }}" class="btn btn-info btn-sm" title="Detail">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="{{ route('supports.edit', $support->id) }}" class="btn btn-warning btn-sm">
+                                    <a href="{{ route('supports.edit', $support->id) }}" class="btn btn-warning btn-sm" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
@@ -202,7 +218,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="text-center">Tidak ada data buku tamu</td>
+                            <td colspan="6" class="text-center">Tidak ada data buku tamu</td>
                         </tr>
                     @endforelse
                 </tbody>

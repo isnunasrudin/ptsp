@@ -50,16 +50,33 @@ class PublicController extends Controller
      */
     public function storeBukuTamu(Request $request)
     {
+        // Basic validation first
         $request->validate([
             'name' => 'required|string|max:255',
             'instansi' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
-            'keperluan' => 'required|string|max:255',
+            'keperluan' => 'required_unless:keperluan,Lainnya|string|max:255',
+            'keperluan_manual' => 'nullable|string|max:255',
             'keterangan' => 'nullable|string',
-            'kartu_identitas' => 'required|file|mimes:jpeg,jpg,png,gif,pdf|max:5120',
+            'dokumen_pendukung' => 'nullable|file|mimes:jpeg,jpg,png,gif,pdf,doc,docx|max:5120',
+            'has_dokumen' => 'required|in:tidak,ada',
         ]);
 
-        // Handle file upload
+        // Manual validation for keperluan_manual
+        if ($request->keperluan === 'Lainnya' && empty($request->keperluan_manual)) {
+            return redirect()->back()
+                ->withErrors(['keperluan_manual' => 'Harap isi keperluan secara manual karena Anda memilih opsi "Lainnya".'])
+                ->withInput();
+        }
+
+        // Validate kartu_identitas if uploaded
+        if ($request->hasFile('kartu_identitas')) {
+            $request->validate([
+                'kartu_identitas' => 'file|mimes:jpeg,jpg,png,gif|max:5120',
+            ]);
+        }
+
+        // Handle file uploads
         $kartuIdentitasPath = null;
         if ($request->hasFile('kartu_identitas')) {
             $file = $request->file('kartu_identitas');
@@ -68,13 +85,26 @@ class PublicController extends Controller
             $kartuIdentitasPath = 'uploads/kartu_identitas/' . $fileName;
         }
 
+        // Handle dokumen pendukung upload only if user has dokumen
+        $dokumenPendukungPath = null;
+        if ($request->has_dokumen === 'ada' && $request->hasFile('dokumen_pendukung')) {
+            $file = $request->file('dokumen_pendukung');
+            $fileName = 'dokumen_pendukung_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/dokumen_pendukung'), $fileName);
+            $dokumenPendukungPath = 'uploads/dokumen_pendukung/' . $fileName;
+        }
+
+        // Set keperluan based on selection
+        $keperluanValue = $request->keperluan === 'Lainnya' ? $request->keperluan_manual : $request->keperluan;
+
         Support::create([
             'name' => $request->name,
             'instansi' => $request->instansi,
             'phone' => $request->phone,
-            'keperluan' => $request->keperluan,
+            'keperluan' => $keperluanValue,
             'keterangan' => $request->keterangan,
             'kartu_identitas' => $kartuIdentitasPath,
+            'dokumen_pendukung' => $dokumenPendukungPath,
             'status' => 'menunggu',
         ]);
 
