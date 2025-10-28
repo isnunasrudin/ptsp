@@ -307,6 +307,22 @@
                                placeholder="Masukkan nama instansi atau alamat rumah" autocomplete="off">
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-4">
+                                <label for="tanggal_kunjungan" class="font-weight-bold text-gray-700">
+                                    <i class="fas fa-calendar-alt mr-1"></i> Tanggal Kunjungan *
+                                </label>
+                                <input type="date" name="tanggal_kunjungan" id="tanggal_kunjungan" class="form-control"
+                                       value="{{ old('tanggal_kunjungan', $support->tanggal_kunjungan ?? date('Y-m-d')) }}" required autocomplete="off">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Tanggal saat pengunjung datang
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="form-group mb-4">
                         <label for="keperluan" class="font-weight-bold text-gray-700">
                             <i class="fas fa-briefcase mr-1"></i> Keperluan *

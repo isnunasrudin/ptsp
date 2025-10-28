@@ -33,14 +33,22 @@ class SupportController extends Controller
             'name' => 'required|string|max:255',
             'instansi' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
-            'keperluan' => 'required_unless:keperluan,Lainnya|string|max:255',
-            'keperluan_manual' => 'required_if:keperluan,Lainnya|string|max:255',
+            'tanggal_kunjungan' => 'required|date',
+            'keperluan' => 'required|string|max:255',
+            'keperluan_manual' => 'nullable|string|max:255',
             'keterangan' => 'nullable|string',
             'kartu_identitas' => 'required|file|mimes:jpeg,jpg,png,gif|max:5120',
             'dokumen_pendukung' => 'nullable|file|mimes:jpeg,jpg,png,gif,pdf,doc,docx|max:5120',
             'has_dokumen' => 'required|in:tidak,ada',
             'status' => 'required|in:menunggu,diproses,selesai',
         ]);
+
+        // Custom validation for keperluan_manual
+        if ($request->keperluan === 'Lainnya' && empty($request->keperluan_manual)) {
+            return redirect()->back()
+                ->withErrors(['keperluan_manual' => 'Keperluan manual wajib diisi saat memilih opsi "Lainnya".'])
+                ->withInput();
+        }
 
         // Handle file uploads
         $data = $request->except(['kartu_identitas', 'dokumen_pendukung', 'keperluan_manual']);
@@ -97,13 +105,21 @@ class SupportController extends Controller
             'name' => 'required|string|max:255',
             'instansi' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
-            'keperluan' => 'required_unless:keperluan,Lainnya|string|max:255',
-            'keperluan_manual' => 'required_if:keperluan,Lainnya|string|max:255',
+            'tanggal_kunjungan' => 'required|date',
+            'keperluan' => 'required|string|max:255',
+            'keperluan_manual' => 'nullable|string|max:255',
             'keterangan' => 'nullable|string',
             'kartu_identitas' => 'nullable|file|mimes:jpeg,jpg,png,gif|max:5120',
             'dokumen_pendukung' => 'nullable|file|mimes:jpeg,jpg,png,gif,pdf,doc,docx|max:5120',
             'status' => 'required|in:menunggu,diproses,selesai',
         ]);
+
+        // Custom validation for keperluan_manual
+        if ($request->keperluan === 'Lainnya' && empty($request->keperluan_manual)) {
+            return redirect()->back()
+                ->withErrors(['keperluan_manual' => 'Keperluan manual wajib diisi saat memilih opsi "Lainnya".'])
+                ->withInput();
+        }
 
         // Handle file uploads
         $updateData = $request->except(['kartu_identitas', 'dokumen_pendukung', 'keperluan_manual']);

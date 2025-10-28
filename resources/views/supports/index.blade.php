@@ -112,6 +112,7 @@
                         <th>No</th>
                         <th>Nama</th>
                         <th>Instansi</th>
+                        <th>Tanggal Kunjungan</th>
                         <th>Keperluan</th>
                         <th>Lampiran</th>
                         <th>Aksi</th>
@@ -122,6 +123,7 @@
                         <th>No</th>
                         <th>Nama</th>
                         <th>Instansi</th>
+                        <th>Tanggal Kunjungan</th>
                         <th>Keperluan</th>
                         <th>Lampiran</th>
                         <th>Aksi</th>
@@ -136,6 +138,23 @@
                             <td>{{ $no++ }}</td>
                             <td>{{ e($support->name) }}</td>
                             <td>{{ e($support->instansi) }}</td>
+                            <td>
+                                @if($support->tanggal_kunjungan)
+                                    <span class="badge badge-info">
+                                        <i class="fas fa-calendar-alt mr-1"></i>
+                                        {{ \Carbon\Carbon::parse($support->tanggal_kunjungan)->locale('id')->translatedFormat('d F Y') }}
+                                    </span>
+                                    <br>
+                                    <small class="text-muted">
+                                        {{ \Carbon\Carbon::parse($support->tanggal_kunjungan)->diffForHumans() }}
+                                    </small>
+                                @else
+                                    <span class="text-muted">
+                                        <i class="fas fa-times-circle"></i>
+                                        <small> Tidak ada</small>
+                                    </span>
+                                @endif
+                            </td>
                             <td>
                                 <span title="{{ e($support->keperluan) }}">
                                     {{ Str::limit($support->keperluan, 40) }}
@@ -218,7 +237,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center">Tidak ada data buku tamu</td>
+                            <td colspan="7" class="text-center">Tidak ada data buku tamu</td>
                         </tr>
                     @endforelse
                 </tbody>

@@ -101,6 +101,7 @@ class PublicController extends Controller
             'name' => $request->name,
             'instansi' => $request->instansi,
             'phone' => $request->phone,
+            'tanggal_kunjungan' => date('Y-m-d'), // Tanggal saat ini
             'keperluan' => $keperluanValue,
             'keterangan' => $request->keterangan,
             'kartu_identitas' => $kartuIdentitasPath,

@@ -10,6 +10,7 @@ class Support extends Model
         'name',
         'instansi',
         'phone',
+        'tanggal_kunjungan',
         'keperluan',
         'keterangan',
         'kartu_identitas',

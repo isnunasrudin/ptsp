@@ -260,6 +260,20 @@
                                placeholder="Masukkan nama instansi atau perusahaan">
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="tanggal_kunjungan">Tanggal Kunjungan *</label>
+                                <input type="date" name="tanggal_kunjungan" id="tanggal_kunjungan" class="form-control"
+                                       value="{{ old('tanggal_kunjungan', date('Y-m-d')) }}" required>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar-alt mr-1"></i>
+                                    Tanggal saat pengunjung datang
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label for="keperluan">Keperluan *</label>
 
@@ -517,7 +531,7 @@ const captureBtn = document.getElementById('captureBtn');
 const switchCameraBtn = document.getElementById('switchCameraBtn');
 const retakeBtn = document.getElementById('retakeBtn');
 const usePhotoBtn = document.getElementById('usePhotoBtn');
-const cameraModal = $('#cameraModal');
+const cameraModal = document.getElementById('cameraModal');
 const cameraContainer = document.getElementById('cameraContainer');
 const cameraButtons = document.getElementById('cameraButtons');
 const capturedImage = document.getElementById('capturedImage');
@@ -592,14 +606,52 @@ const keperluanSelect = document.getElementById('keperluan');
 const keperluanManualContainer = document.getElementById('keperluan_manual_container');
 const keperluanManual = document.getElementById('keperluan_manual');
 
+// Initialize - hide manual input by default
+if (keperluanManualContainer) {
+    keperluanManualContainer.style.display = 'none';
+}
+
 keperluanSelect.addEventListener('change', function() {
+    console.log('Keperluan select changed to:', this.value);
+
     if (this.value === 'Lainnya') {
         // Show manual input
+        console.log('Showing manual input');
         keperluanManualContainer.style.display = 'block';
+        keperluanManual.focus();
     } else {
         // Hide manual input
+        console.log('Hiding manual input');
         keperluanManualContainer.style.display = 'none';
         keperluanManual.value = '';
+    }
+});
+
+// Wait for DOM to be ready
+document.addEventListener('DOMContentLoaded', function() {
+    const keperluanSelectReady = document.getElementById('keperluan');
+    const keperluanManualContainerReady = document.getElementById('keperluan_manual_container');
+    const keperluanManualReady = document.getElementById('keperluan_manual');
+
+    if (keperluanSelectReady && keperluanManualContainerReady) {
+        // Initialize - hide manual input by default
+        keperluanManualContainerReady.style.display = 'none';
+
+        keperluanSelectReady.addEventListener('change', function() {
+            console.log('DOMContentLoaded keperluan changed to:', this.value);
+
+            if (this.value === 'Lainnya') {
+                keperluanManualContainerReady.style.display = 'block';
+                if (keperluanManualReady) {
+                    keperluanManualReady.focus();
+                }
+            } else {
+                keperluanManualContainerReady.style.display = 'none';
+                if (keperluanManualReady) {
+                    keperluanManualReady.value = '';
+                }
+            }
+        });
     }
 });
 
@@ -700,7 +752,8 @@ function handleFileSelect(file) {
 
 // Open camera modal
 cameraBtn.addEventListener('click', async function() {
-    cameraModal.modal('show');
+    const modal = new bootstrap.Modal(cameraModal);
+    modal.show();
     await startCamera();
 });
 
@@ -781,24 +834,36 @@ usePhotoBtn.addEventListener('click', function() {
         handleFileSelect(file);
 
         // Close modal and show success message
-        cameraModal.modal('hide');
+        const modal = bootstrap.Modal.getInstance(cameraModal);
+        modal.hide();
 
-        const alert = $('<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+        // Create success alert
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success alert-dismissible fade show';
+        alertDiv.setAttribute('role', 'alert');
+        alertDiv.innerHTML =
             '<i class="fas fa-check-circle mr-2"></i>Foto berhasil diambil!' +
             '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
             '<span aria-hidden="true">&times;</span>' +
-            '</button></div>');
+            '</button>';
 
-        $('form').prepend(alert);
+        const form = document.querySelector('form');
+        form.insertBefore(alertDiv, form.firstChild);
 
         setTimeout(function() {
-            alert.fadeOut('slow');
+            alertDiv.style.transition = 'opacity 0.5s';
+            alertDiv.style.opacity = '0';
+            setTimeout(function() {
+                if (alertDiv.parentNode) {
+                    alertDiv.parentNode.removeChild(alertDiv);
+                }
+            }, 500);
         }, 3000);
     }, 'image/jpeg', 0.8);
 });
 
 // Clean up camera when modal is closed
-cameraModal.on('hidden.bs.modal', function() {
+cameraModal.addEventListener('hidden.bs.modal', function() {
     if (stream) {
         stream.getTracks().forEach(track => track.stop());
         stream = null;
@@ -810,44 +875,48 @@ cameraModal.on('hidden.bs.modal', function() {
 });
 
 // Form validation enhancement
-$('form').on('submit', function(e) {
+const form = document.querySelector('form');
+form.addEventListener('submit', function(e) {
     // Validate keperluan
-    const keperluanSelect = $('#keperluan').val();
-    const keperluanManual = $('#keperluan_manual').val();
+    const keperluanSelect = document.getElementById('keperluan').value;
+    const keperluanManual = document.getElementById('keperluan_manual').value;
 
     if (!keperluanSelect) {
         e.preventDefault();
         alert('Harap pilih keperluan dari daftar.');
-        $('#keperluan').focus();
+        document.getElementById('keperluan').focus();
         return false;
     }
 
     if (keperluanSelect === 'Lainnya' && !keperluanManual.trim()) {
         e.preventDefault();
         alert('Harap tulis keperluan secara manual karena Anda memilih opsi "Lainnya".');
-        $('#keperluan_manual').focus();
+        document.getElementById('keperluan_manual').focus();
         return false;
     }
 
     // Validate dokumen pendukung
-    const hasDokumenValue = $('input[name="has_dokumen"]:checked').val();
-    const dokumenFile = $('#dokumen_pendukung')[0].files[0];
+    const hasDokumenRadio = document.querySelector('input[name="has_dokumen"]:checked');
+    const hasDokumenValue = hasDokumenRadio ? hasDokumenRadio.value : null;
+    const dokumenFile = document.getElementById('dokumen_pendukung').files[0];
 
     if (hasDokumenValue === 'ada' && !dokumenFile) {
         e.preventDefault();
         alert('Harap pilih dokumen pendukung karena Anda memilih opsi "Ada dokumen pendukung".');
-        $('#dokumen_pendukung').focus();
+        document.getElementById('dokumen_pendukung').focus();
         return false;
     }
 
-    $('button[type="submit"]').prop('disabled', true);
-    $('button[type="submit"]').html('<i class="fas fa-spinner fa-spin mr-2"></i> Menyimpan...');
+    // Disable submit button and show loading
+    const submitBtn = document.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Menyimpan...';
 });
 
 // Check if camera is supported
 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    cameraBtn.prop('disabled', true);
-    cameraBtn.attr('title', 'Kamera tidak didukung pada browser ini');
+    cameraBtn.disabled = true;
+    cameraBtn.title = 'Kamera tidak didukung pada browser ini';
 }
 </script>
 
