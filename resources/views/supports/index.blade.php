@@ -92,8 +92,20 @@
 
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
         <h6 class="m-0 font-weight-bold text-primary">Data Buku Tamu</h6>
+        <form action="{{ route('supports.export') }}" method="POST" class="form-inline">
+            @csrf
+            <div class="form-group mx-sm-3 mb-2">
+                <label for="from" class="mr-2">Dari Tanggal : </label>
+                <input type="date" class="form-control" id="from" name="from" required value="{{ old('from', now()->subDays(7)->format('Y-m-d')) }}">
+            </div>
+            <div class="form-group mx-sm-3 mb-2">
+                <label for="to" class="mr-2">Sampai Tanggal : </label>
+                <input type="date" class="form-control" id="to" name="to" required value="{{ old('to', now()->format('Y-m-d')) }}">
+            </div>
+            <button type="submit" class="btn btn-primary mb-2">Export</button>
+        </form>
     </div>
     <div class="card-body">
         @if (session('success'))

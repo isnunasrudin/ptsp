@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\SupportExport;
 use App\Models\Support;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SupportController extends Controller
 {
@@ -181,5 +183,15 @@ class SupportController extends Controller
 
         return redirect()->route('supports.index')
             ->with('success', 'Data buku tamu berhasil dihapus.');
+    }
+
+    public function export(Request $request)
+    {
+        $validated = $request->validate([
+            'from' => 'required|date',
+            'to' => 'required|date|after_or_equal:from',
+        ]);
+
+        return Excel::download(new SupportExport($validated['from'], $validated['to']), 'supports_' . $validated['from'] . '_' . $validated['to'] . '.xlsx');
     }
 }

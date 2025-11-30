@@ -56,5 +56,7 @@ Route::resource('supports', 'SupportController')->names([
     'show' => 'supports.show',
     'edit' => 'supports.edit',
     'update' => 'supports.update',
-    'destroy' => 'supports.destroy'
+    'destroy' => 'supports.destroy',
 ]);
+
+Route::post('supports/export', 'SupportController@export')->name('supports.export');
