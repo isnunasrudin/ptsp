@@ -22,7 +22,18 @@ class SupportExport implements FromCollection, WithHeadings
     */
     public function collection()
     {
-        return Support::whereBetween('tanggal_kunjungan', [$this->from, $this->to])->get();
+        $index = 1;
+        return Support::whereBetween('tanggal_kunjungan', [$this->from, $this->to])->map(function ($support) use ($index) {
+            return [
+                'No' => $index++,
+                'Nama' => $support->name,
+                'Instansi' => $support->instansi,
+                'Tanggal Kunjungan' => $support->tanggal_kunjungan,
+                'Keperluan' => $support->keperluan,
+                'Lampiran' => $support->kartu_identitas,
+                'Status' => $support->status,
+            ];
+        });
     }
 
     public function headings(): array
