@@ -23,7 +23,7 @@ class SupportExport implements FromCollection, WithHeadings
     public function collection()
     {
         $index = 1;
-        return Support::whereBetween('tanggal_kunjungan', [$this->from, $this->to])->map(function ($support) use ($index) {
+        return Support::whereBetween('tanggal_kunjungan', [$this->from, $this->to])->get()->map(function ($support) use ($index) {
             return [
                 'No' => $index++,
                 'Nama' => $support->name,
