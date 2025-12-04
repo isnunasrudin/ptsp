@@ -5,7 +5,7 @@
         border-collapse: collapse; /* Penting untuk menggabungkan batas */
         margin-top: 25px;
         font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-size: 11pt;
+        font-size: 9pt;
         /* Hapus box-shadow dan border-radius jika ingin tampilan yang sangat formal dengan border penuh */
         /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
         /* border-radius: 6px; */
@@ -65,7 +65,7 @@
         font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         color: #555;
         margin-top: 0;
-        font-size: 12pt;
+        font-size: 10pt;
     }
     /* Style khusus untuk kolom No. agar rata tengah */
     td:first-child {
@@ -85,10 +85,11 @@
     <thead>
         <tr>
             <th style="width: 5%;">No.</th>
-            <th style="width: 25%;">Nama</th>
-            <th style="width: 20%;">Instansi</th>
-            <th style="width: 15%;">Tanggal</th>
-            <th style="width: 35%;">Keperluan</th>
+            <th style="width: 15%;">Nama</th>
+            <th style="width: 15%;">Alamat</th>
+            <th style="width: 10%;">Tanggal</th>
+            <th style="width: 30%;">Keperluan</th>
+            <th style="width: 20%;">Foto</th>
         </tr>
     </thead>
     <tbody>
@@ -101,6 +102,15 @@
                     <div>{{ \Carbon\Carbon::parse($support->tanggal_kunjungan)->format('d/m/Y') }}</div>
                 </td>
                 <td>{{ $support->keperluan }}</td>
+                <td>
+                    @if ($support->kartu_identitas)
+                        <a href="{{ asset($support->kartu_identitas) }}" style="display: block">
+                            <img src="{{ $support->kartu_identitas }}" alt="Foto" style="width: 100%">
+                        </a>
+                    @else
+                        Tidak ada foto
+                    @endif
+                </td>
             </tr>
         @endforeach
     </tbody>
