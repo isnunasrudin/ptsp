@@ -101,7 +101,14 @@
                 <td class="tanggal-cell">
                     <div>{{ \Carbon\Carbon::parse($support->tanggal_kunjungan)->format('d/m/Y') }}</div>
                 </td>
-                <td>{{ $support->keperluan }}</td>
+                <td>
+                    <div>{{ $support->keperluan }}</div>
+                    Lampiran: @if ($support->dokumen_pendukung)
+                        <a href="{{ asset($support->dokumen_pendukung) }}">Lihat</a>
+                    @else
+                        -
+                    @endif
+                </td>
                 <td>
                     @if ($support->kartu_identitas)
                         <a href="{{ asset($support->kartu_identitas) }}" style="display: block">
