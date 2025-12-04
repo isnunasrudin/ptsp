@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\SupportExport;
 use App\Models\Support;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -194,4 +195,20 @@ class SupportController extends Controller
 
         return Excel::download(new SupportExport($validated['from'], $validated['to']), 'supports_' . $validated['from'] . '_' . $validated['to'] . '.xlsx');
     }
+
+    public function print(Request $request)
+    {
+        $validated = $request->validate([
+            'from' => 'required|date',
+            'to' => 'required|date|after_or_equal:from',
+        ]);
+
+        return Pdf::loadView('print.recap_supports', [
+            'supports' => Support::whereBetween('tanggal_kunjungan', [$validated['from'], $validated['to']])->get(),
+            'from' => $validated['from'],
+            'to' => $validated['to'],
+        ])->stream();
+    }
+
+
 }

@@ -60,3 +60,4 @@ Route::resource('supports', 'SupportController')->names([
 ]);
 
 Route::post('supports/export', 'SupportController@export')->name('supports.export');
+Route::post('supports/print', 'SupportController@print')->name('supports.print');

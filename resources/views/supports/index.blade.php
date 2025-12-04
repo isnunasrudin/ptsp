@@ -94,7 +94,7 @@
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between align-items-center">
         <h6 class="m-0 font-weight-bold text-primary">Data Buku Tamu</h6>
-        <form action="{{ route('supports.export') }}" method="POST" class="form-inline">
+        <form action="{{ route('supports.print') }}" method="POST" class="form-inline">
             @csrf
             <div class="form-group mx-sm-3 mb-2">
                 <label for="from" class="mr-2">Dari Tanggal : </label>
