@@ -1,5 +1,6 @@
 <?php
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -48,6 +49,9 @@ Route::resource('feedback', 'FeedbackController')->names([
     'destroy' => 'feedback.destroy'
 ]);
 
+Route::get('supports/export', 'SupportController@export')->name('supports.export');
+Route::get('supports/print', 'SupportController@print')->name('supports.print');
+
 // Support Management Routes (Buku Tamu)
 Route::resource('supports', 'SupportController')->names([
     'index' => 'supports.index',
@@ -59,5 +63,10 @@ Route::resource('supports', 'SupportController')->names([
     'destroy' => 'supports.destroy',
 ]);
 
-Route::post('supports/export', 'SupportController@export')->name('supports.export');
-Route::post('supports/print', 'SupportController@print')->name('supports.print');
+Route::get('test', function() {
+
+    return Pdf::loadView('print.recap', [])
+        ->setPaper('a4', 'potrait')
+        ->stream();
+
+});

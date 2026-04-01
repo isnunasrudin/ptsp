@@ -203,11 +203,11 @@ class SupportController extends Controller
             'to' => 'required|date|after_or_equal:from',
         ]);
 
-        return Pdf::loadView('print.recap_supports', [
+        return Pdf::loadView('print.recap', [
             'supports' => Support::whereBetween('tanggal_kunjungan', [$validated['from'], $validated['to']])->get(),
             'from' => $validated['from'],
             'to' => $validated['to'],
-        ])->stream();
+        ])->stream("Rekap Buku Tamu " . $validated['from'] . "_" . $validated['to'] . ".pdf");
     }
 
 
