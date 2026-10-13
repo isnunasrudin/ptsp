@@ -8,27 +8,45 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
-        "barryvdh/laravel-dompdf": "^3.1",
+        "php": "^7.4 || ^8.0",
+        "barryvdh/laravel-dompdf": "^2.2",
+        "doctrine/dbal": "^3.6",
+        "fruitcake/laravel-cors": "^2.2",
         "devmarketer/easynav": "^1.0",
         "guzzlehttp/guzzle": "^7.2",
-        "laravel/framework": "^12.3.0",
+        "laravel/framework": "^8.83",
         "laravel/legacy-factories": "^1.4",
         "laravel/tinker": "^2.10.1",
-        "laravel/ui": "^4.0",
-        "maatwebsite/excel": "^3.1",
-        "symfony/http-client": "^6.1",
-        "symfony/mailgun-mailer": "^6.1",
-        "symfony/postmark-mailer": "^6.1"
+        "laravel/ui": "^3.4",
+        "maatwebsite/excel": "^3.1"
     },
     "require-dev": {
-        "spatie/laravel-ignition": "^2.0",
+        "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.23",
         "mockery/mockery": "^1.6",
-        "nunomaduro/collision": "^8.6",
-        "phpunit/phpunit": "^11.5.3"
+        "nunomaduro/collision": "^5.11",
+        "phpunit/phpunit": "^9.6"
     },
     "config": {
+        "audit": {
+            "ignore": {
+                "PKSA-cv56-2228-pzr6": { "apply": "block", "reason": "PHP 7.4 legacy PDF; remains visible in audit. See README." },
+                "PKSA-6r8f-nxsb-67bq": { "apply": "block", "reason": "PHP 7.4 legacy PDF; remains visible in audit. See README." },
+                "PKSA-gh7h-hhy4-byg7": { "apply": "block", "reason": "PHP 7.4 legacy PDF; remains visible in audit. See README." },
+                "PKSA-mwt3-h9tv-kx78": { "apply": "block", "reason": "PHP 7.4 legacy PDF; remains visible in audit. See README." },
+                "PKSA-hp6n-n4kz-21wk": { "apply": "block", "reason": "PHP 7.4 legacy PDF; remains visible in audit. See README." },
+                "PKSA-mckv-s5hg-868k": { "apply": "block", "reason": "PHP 7.4 legacy PDF; remains visible in audit. See README." },
+                "PKSA-d5tc-s1qs-h781": { "apply": "block", "reason": "Laravel 8 required for PHP 7.4; remains visible in audit. See README." },
+                "PKSA-m5cs-t1y6-qpcs": { "apply": "block", "reason": "Laravel 8 required for PHP 7.4; remains visible in audit. See README." },
+                "PKSA-3r5d-mb8f-1qw9": { "apply": "block", "reason": "Laravel 8 required for PHP 7.4; remains visible in audit. See README." },
+                "PKSA-8qx3-n5y5-vvnd": { "apply": "block", "reason": "Laravel 8 required for PHP 7.4; remains visible in audit. See README." },
+                "PKSA-w7xr-vk7n-rstm": { "apply": "block", "reason": "Laravel 8 required for PHP 7.4; remains visible in audit. See README." },
+                "PKSA-w9tt-7782-78jx": { "apply": "block", "reason": "Flysystem 1 required by Laravel 8; remains visible in audit. See README." }
+            }
+        },
+        "platform": {
+            "php": "7.4.33"
+        },
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true
@@ -50,7 +68,7 @@
             "Tests\\": "tests/"
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "scripts": {
         "post-autoload-dump": [
